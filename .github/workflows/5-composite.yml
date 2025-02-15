@@ -5,7 +5,7 @@ on:
       - main
   workflow_dispatch:
 jobs:
-    test:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Get code
@@ -36,4 +36,3 @@ jobs:
         with:
           name: dist-files
           path: dist
-
