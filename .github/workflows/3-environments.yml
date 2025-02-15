@@ -19,10 +19,6 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v4
-      - name: Install NodeJS
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
       - name: Install dependencies
         run: npm ci
       - name: Run tests
@@ -36,10 +32,6 @@ jobs:
     steps:
       - name: Get code
         uses: actions/checkout@v4
-      - name: Install NodeJS
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
