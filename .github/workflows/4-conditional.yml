@@ -1,8 +1,8 @@
 name: Conditional Deployment
 on:
-  push:
-    branches:
-      - main
+  #push:
+  #  branches:
+  #    - main
   workflow_dispatch:      
 jobs:
   test:
@@ -17,7 +17,6 @@ jobs:
           path: '~/.npm'
           key: deps-npm-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
-        #if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
       - name: Test code
         id: run-tests
@@ -41,7 +40,6 @@ jobs:
           path: '~/.npm'
           key: deps-npm-${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
-        #if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
       - name: Build website
         id: build-website
