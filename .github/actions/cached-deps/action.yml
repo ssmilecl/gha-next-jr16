@@ -16,8 +16,10 @@ runs:
       if: inputs.caching == 'true'
       id: cache
       run: echo "Cached dependencies"
+      shell: bash
     - name: Install dependencies
       id: install
       run: |
         npm ci
         echo "cache='${{ inputs.caching }}'" >> $GITHUB_OUTPUT
+      shell: bash
