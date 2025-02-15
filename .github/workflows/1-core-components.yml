@@ -1,7 +1,7 @@
 name: Deploy Project
 #on: [push, workflow_dispatch]
 on:
-  - push
+  #- push
   - workflow_dispatch
 jobs:
   test:
