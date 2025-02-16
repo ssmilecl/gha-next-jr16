@@ -1,12 +1,15 @@
-FROM node:22 AS build
+FROM node:18 AS build
 
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
+
+COPY prisma ./prisma
+
 COPY . .
 RUN npm run build
 
-FROM node:22 as runtime
+FROM node:18 as runtime
 
 WORKDIR /app
 COPY package*.json ./
