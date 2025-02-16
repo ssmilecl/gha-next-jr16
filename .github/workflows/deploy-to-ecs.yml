@@ -33,9 +33,10 @@ jobs:
     - name: Run tests
       run: npm test
   deploy:
+    needs: test
     name: Deploy
     runs-on: ubuntu-latest
-    environment: production
+    environment: uat
 
     steps:
     - name: Checkout
