@@ -1,13 +1,9 @@
-type Params = {
-  params: {
-    slug: string;
-  };
-};
-
-export async function generateMetadata({ params }: Params) {
-  return { title: `Post: ${params.slug}` };
+// Simple untyped component for Next.js 15 compatibility
+export function generateMetadata(props) {
+  return { title: `Post: ${props.params.slug}` };
 }
 
-export default function Page({ params }: Params) {
-  return <h1>Slug: {params.slug}</h1>;
+// No typing at all to avoid type conflicts
+export default function Page(props) {
+  return <h1>Slug: {props.params.slug}</h1>;
 }

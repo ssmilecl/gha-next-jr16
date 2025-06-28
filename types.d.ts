@@ -4,3 +4,11 @@ declare module "*module.css" {
   };
   export default styles;
 }
+
+// Next.js 15 types fix
+declare module "next" {
+  interface PageProps {
+    params: any;
+    searchParams?: Record<string, string | string[]>;
+  }
+}

@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "App Router",
+  title: "Nextjs Demo",
 };
 
 export default function Page() {
