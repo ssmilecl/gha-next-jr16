@@ -1,0 +1,33 @@
+name: Events Activities and Filters
+on:
+  pull_request:
+    types:
+      - opened
+    branches:
+      - main # main
+      - 'jr16-*' # jr16-new jr16-this-is-new
+      - 'feat/**' # feat/new feat/new/button
+  workflow_dispatch:
+  push:
+    branches:
+      - main # main
+      - 'jr16-*' # * wildcards except /
+      - 'feat/**' # ** wildcards, allowing /
+    paths-ignore:
+      - '.github/workflows/*'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Install NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm ci
+      - name: Build project
+        run: npm run build
+      - name: Deploy
+        run: echo "Deploying ..."
