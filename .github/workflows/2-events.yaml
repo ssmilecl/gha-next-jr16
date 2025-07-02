@@ -8,14 +8,11 @@ on:
       - 'jr16-*' # jr16-new jr16-this-is-new
       - 'feat/**' # feat/new feat/new/button
   workflow_dispatch:
-  push:
-    branches:
-      - main # main
-      - 'jr16-*' # * wildcards except /
-      - 'feat/**' # ** wildcards, allowing /
-    jr16-wk4
-    # paths-ignore:
-    #   - '.github/workflows/*'
+  # push:
+  #   branches:
+  #     - main # main
+  #     - 'jr16-*' # * wildcards except /
+  #     - 'feat/**' # ** wildcards, allowing /
 
 jobs:
   deploy:
