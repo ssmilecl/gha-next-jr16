@@ -8,7 +8,6 @@ on:
       - 'jr16-*' # jr16-new jr16-this-is-new
       - 'feat/**' # feat/new feat/new/button
   workflow_dispatch:
-   dev
   # push:
   #   branches:
   #     - main # main
