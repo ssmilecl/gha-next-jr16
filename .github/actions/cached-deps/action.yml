@@ -1,0 +1,33 @@
+name: 'Get & Cache Dependencies'
+description: 'Get the dependencies (via npm) and cache them.'
+inputs:
+  caching:
+    description: 'Whether to cache dependencies or not.'
+    required: false
+    default: 'true'
+outputs:
+  used-cache:
+    description: 'Whether the cache was used.'
+    value: ${{ steps.install.outputs.cache }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Cache dependencies
+      if: inputs.caching == 'true'
+      id: cache
+      # From https://nextjs.org/docs/app/guides/ci-build-caching#github-actions
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.npm
+          ${{ github.workspace }}/.next/cache
+        key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+        restore-keys: |
+          ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+    
+    - name: Install dependencies
+      id: install
+      run: |
+        npm ci
+        echo "cache='${{ inputs.caching }}'" >> $GITHUB_OUTPUT
+      shell: bash
