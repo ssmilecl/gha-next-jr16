@@ -1,9 +1,9 @@
 name: Environments
 on:
-  push:
-    branches:
-      - main
-      - dev
+#   push:
+#     branches:
+#       - main
+#       - dev
   workflow_dispatch:    
 env:
   MONGODB_DB_NAME_G: jr16-mongo

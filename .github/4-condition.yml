@@ -1,0 +1,105 @@
+name: Conditional Deployment Demo
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      deploy_env:
+        description: 'Deploy to environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    outputs:
+      test-passed: ${{ steps.run-tests.outcome == 'success' }}
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run tests
+        id: run-tests
+        run: npm run test:ci
+      
+      # Conditional: Only upload test report on failure
+      - name: Upload test report
+        if: failure() && steps.run-tests.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: coverage/
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+
+    # Conditional: Only build if tests passed
+    if: needs.test.outputs.test-passed == 'true'
+    outputs:
+      build-success: ${{ steps.build-website.outcome == 'success' }}
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build website
+        id: build-website
+        run: npm run build
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-files
+          path: .next
+          include-hidden-files: true
+
+  deploy:
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    # Conditional: Only deploy if build succeeded AND it's main branch OR manual trigger
+    if: |
+      needs.build.outputs.build-success == 'true' &&
+      (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch')
+    environment: 
+      name: ${{ inputs.deploy_env || 'staging' }}
+    steps:      
+      - name: Get build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-files
+
+      - name: Deploy
+        run: |
+          echo "Deploying to ${{ inputs.deploy_env || 'staging' }}..."
+          sleep 3
+          echo "✅ Deployment completed!"
+
+  notify:
+    needs: [test, build, deploy]
+    runs-on: ubuntu-latest
+    if: failure() 
+    steps:
+      - name: Report status
+        run: |
+          echo "� Workflow Summary:"
+          echo "Tests: ${{ needs.test.result }}"
+          echo "Build: ${{ needs.build.result }}"
+          echo "Deploy: ${{ needs.deploy.result }}"
+          
+          if [[ "${{ contains(needs.*.result, 'failure') }}" == "true" ]]; then
+            echo "❌ Something went wrong!"
+            echo "Check the failed jobs above for details"
+          else
+            echo "✅ All jobs completed successfully!"
+          fi
