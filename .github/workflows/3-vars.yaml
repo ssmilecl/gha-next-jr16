@@ -1,0 +1,57 @@
+name: Environments
+on:
+  push:
+    branches:
+      - main
+      - dev
+  workflow_dispatch:    
+env:
+  MONGODB_DB_NAME_G: jr16-mongo
+  PORT: 80
+jobs:
+  test:
+    environment: dev
+    runs-on: ubuntu-latest
+    env:
+      MONGODB_CLUSTER_ADDRESS_J: jr16.mongodb.net
+      MONGODB_USERNAME: ${{ vars.MONGODB_USERNAME }}
+      MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
+      PORT: 8080
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Install NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm ci
+      - name: Run tests
+        run: npm test
+      - name: Output information
+        run: |
+          echo "MONGODB_USERNAME: $MONGODB_USERNAME"
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+      - name: Install NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm ci
+      - name: Build project
+        run: npm run build
+      - name: Deploy
+        run: echo "Deploying ..."
+      - name: Output information
+        env:
+          PORT: 3000
+        run: |        
+          echo "MONGODB_DB_NAME_G: $MONGODB_DB_NAME_G"
+          echo "MONGODB_USERNAME: $MONGODB_USERNAME"
+          echo "MONGODB_USERNAME_REPO: ${{ vars.MONGODB_USERNAME }}"
+          echo "PORT: ${{ env.PORT }}"
